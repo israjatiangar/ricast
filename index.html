@@ -3,7 +3,66 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>riCast</title>
+		<link rel="stylesheet" href="./css/ri.min.css" />
+		<style>
+			.weather {
+				font-size: 500%;
+				padding: 0;
+				margin: 0;
+			}
+			h1 {
+				margin: 0;
+			}
+		</style>
+		<!--<script src="./js/script.js"></script>-->
 	</head>
-	<body></body>
+	<body>
+		<header>
+			<nav>
+				<strong>🌈 riCast</strong>
+			</nav>
+		</header>
+		<main>
+			<h2>Today</h2>
+			<article id="Today_Card" align="center">
+				<header>
+					<strong>Mumbai, India</strong>
+					<br />
+					<small>Today, Sat 19 September 2026</small>
+				</header>
+				<div>
+					<span class="weather">☀️</span>
+					<h1>29.2°C</h1>
+					<h5>Wind 30km/h SE</h5>
+				</div>
+				<footer>
+					<div class="ri-grid">
+						<span>Sunrise at 00:56</span>
+						<span>Sunset at at 00:56</span>
+					</div>
+				</footer>
+			</article>
+			<h2>Weekly Forecast</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Day</th>
+						<td>Min</td>
+						<td>Max</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th>Tomorrow</th>
+						<td>⛈️24.6</td>
+						<td>⛈️29.7</td>
+					</tr>
+				</tbody>
+			</table>
+		</main>
+		<footer align="center">
+			<small>powered by Open Meteo & ipwho.is</small>
+		</footer>
+	</body>
 </html>
