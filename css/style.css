@@ -1,0 +1,62 @@
+.weather {
+	font-size: 500%;
+	padding: 0;
+	margin: 0;
+}
+h1 {
+	margin: 0;
+}
+.empty_forecast {
+	display: none;
+}
+.empty_forecast:only-child {
+	display: table-row;
+}
+#Error {
+	display: none;
+	transform: translateY(100vh);
+	scale: 0.8;
+	transition: all 0.15s ease-out allow-discrete;
+}
+#Error[open] {
+	display: block;
+	scale: 1;
+	transform: translateY(0);
+	@starting-style {
+		scale: 0.8;
+		display: block;
+		transform: translateY(100vh);
+	}
+}
+
+:has(> .loader) {
+	z-index: 10;
+	background: rgb(from #000 r g b / 0.5);
+	backdrop-filter: blur(6px);
+	display: grid;
+	place-items: center;
+	width: 100svw;
+	height: 100vh;
+	position: fixed;
+	pointer-events: visible;
+	top: 0;
+	left: 0;
+}
+.loader {
+	--color-1: var(--ri-text-muted);
+	--size: 1px;
+	width: calc(48 * var(--size));
+	height: calc(48 * var(--size));
+	border: calc(5 * var(--size)) solid var(--color-1);
+	border-bottom-color: transparent;
+	border-radius: 50%;
+	display: inline-block;
+	box-sizing: border-box;
+	animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+	to {
+		transform: rotate(360deg);
+	}
+}
