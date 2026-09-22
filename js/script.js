@@ -21,6 +21,15 @@
  * @property {Array <String>} weeklyMaxTemperature
  * @property {Array <Number>} weeklyWeatherCode
  */
+
+/** @typedef {Object} LocationResult
+ * @property {String} name
+ * @property {String} country
+ *
+ * @typedef {Object} GeocodingResponse
+ * @property {Array<LocationResult>} [results]
+ *
+ */
 // #endregion
 
 // #region Global Const and Class
@@ -31,7 +40,7 @@ const CURRENT_DATE = new Date().toLocaleString('en', {
 	month: 'short',
 	year: 'numeric',
 })
-
+const DEBOUNCE_TIME = 500 //ms
 /** Delcared all App UI Element in a Class for easy access and better organisation
  * @class appUIElements
  */
@@ -109,6 +118,10 @@ class SearchElement {
 	SearchInput =
 		/** @type {HTMLInputElement} */
 		(this.SearchForm.querySelector('#Location_Input'))
+
+	SearchOptionsList =
+		/** @type {HTMLDataListElement} */
+		(this.SearchForm.querySelector('#Search_Options'))
 
 	SearchButton =
 		/** @type {HTMLButtonElement} */
@@ -220,6 +233,30 @@ const getLocationFromInput = async locationInput => {
 		latitude: fetchedLocation.results[0].latitude,
 	}
 	return userLocation
+}
+
+/** A Function Take Takes in Input and returns a string of matching Location Options
+ * @param {String} locationInput
+ * @returns {Promise<Array<String>> }
+ */
+const getLocationInputOptions = async locationInput => {
+	/** @type {GeocodingResponse} */
+	const fetchedLocation = await fetch(
+		`https://geocoding-api.open-meteo.com/v1/search?name=${locationInput}&count=10&language=en&format=json`
+	).then(response => response.json())
+
+	if (!fetchedLocation.results) {
+		return ['No Locations Matched']
+	}
+
+	/**@type {Array<string>} */
+	const locationList = []
+
+	fetchedLocation?.results.map(item => {
+		locationList.push(`${item.name}, ${item.country}`)
+	})
+
+	return locationList
 }
 // #endregion
 
@@ -348,7 +385,23 @@ const updatePage = async searchLocation => {
 }
 
 updatePage()
+
 const searchLocation = new SearchElement()
+let inputTimer = DEBOUNCE_TIME
+searchLocation.SearchInput.addEventListener('input', () => {
+	searchLocation.SearchOptionsList.innerHTML = ''
+	clearTimeout(inputTimer)
+	inputTimer = setTimeout(async () => {
+		const results = await getLocationInputOptions(
+			searchLocation.SearchInput.value
+		)
+		results.map(option => {
+			const createOption = document.createElement('option')
+			createOption.setAttribute('value', option)
+			searchLocation.SearchOptionsList.append(createOption)
+		})
+	}, DEBOUNCE_TIME)
+})
 
 searchLocation.SearchButton.addEventListener('click', async event => {
 	event.preventDefault()
@@ -362,6 +415,7 @@ searchLocation.SearchButton.addEventListener('click', async event => {
 		)
 	}
 })
+
 searchLocation.CurrentLocation.addEventListener('click', event => {
 	event.preventDefault()
 	updatePage()
