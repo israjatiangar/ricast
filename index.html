@@ -5,62 +5,83 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>riCast</title>
 		<link rel="stylesheet" href="./css/ri.min.css" />
-		<style>
-			.weather {
-				font-size: 500%;
-				padding: 0;
-				margin: 0;
-			}
-			h1 {
-				margin: 0;
-			}
-		</style>
-		<!--<script src="./js/script.js"></script>-->
+		<link rel="stylesheet" href="./css/style.css" />
+		<script defer src="./js/script.js"></script>
 	</head>
-	<body>
+	<body class="ri-width-full">
 		<header>
 			<nav>
 				<strong>🌈 riCast</strong>
 			</nav>
 		</header>
 		<main>
-			<h2>Today</h2>
-			<article id="Today_Card" align="center">
-				<header>
-					<strong>Mumbai, India</strong>
-					<br />
-					<small>Today, Sat 19 September 2026</small>
-				</header>
-				<div>
-					<span class="weather">☀️</span>
-					<h1>29.2°C</h1>
-					<h5>Wind 30km/h SE</h5>
-				</div>
-				<footer>
-					<div class="ri-grid">
-						<span>Sunrise at 00:56</span>
-						<span>Sunset at at 00:56</span>
-					</div>
-				</footer>
-			</article>
-			<h2>Weekly Forecast</h2>
-			<table>
-				<thead>
-					<tr>
-						<th>Day</th>
-						<td>Min</td>
-						<td>Max</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<th>Tomorrow</th>
-						<td>⛈️24.6</td>
-						<td>⛈️29.7</td>
-					</tr>
-				</tbody>
-			</table>
+			<fieldset id="Search_Form">
+				<legend>Search a Location</legend>
+				<input
+					id="Location_Input"
+					type="text"
+					placeholder="Search a Location..."
+					required />
+				<button id="Search_Button">Get Weather</button>
+				<button id="Current_Location" class="ri-secondary">
+					Use Current Location
+				</button>
+			</fieldset>
+			<div class="ri-grid">
+				<section>
+					<h2>Today</h2>
+					<article id="Today_Card" align="center">
+						<header>
+							<strong>----, ----</strong>
+							<br />
+							<small>---, --- --, ----</small>
+						</header>
+						<div>
+							<span id="Weather_Icon" class="weather">☀️</span>
+							<h1 id="Temperature">--.--°C</h1>
+							<h5 id="Windspeed">Wind --km/h --</h5>
+						</div>
+						<footer>
+							<div class="ri-grid">
+								<span id="Sunrise">Sunrise at --:--</span>
+								<span id="Sunset">Sunset at --:--</span>
+							</div>
+						</footer>
+					</article>
+				</section>
+				<section>
+					<h2>Weekly Forecast</h2>
+					<table>
+						<thead>
+							<tr>
+								<th>Day</th>
+								<td>Min</td>
+								<td>Max</td>
+							</tr>
+						</thead>
+						<tbody id="Weekly_Forecast">
+							<tr class="empty_forecast">
+								<td>---</td>
+								<td>---</td>
+								<td>---</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+			</div>
 		</main>
+		<dialog id="Error_Dialog" data-ri-color="red">
+			<header>
+				<h3>Error</h3>
+			</header>
+			<div id="Error_Message">
+				Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam,
+				autem.
+			</div>
+			<footer>
+				<button command="close" commandfor="Error_Dialog">Close</button>
+			</footer>
+		</dialog>
 		<footer align="center">
 			<small>powered by Open Meteo & ipwho.is</small>
 		</footer>

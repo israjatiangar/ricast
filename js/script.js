@@ -71,7 +71,6 @@ class appUIElements {
 		/** @type {HTMLElement} */
 		(this.TodayCard.querySelector('#Sunset'))
 }
-
 class LoadingElement {
 	loadingBackdrop = document.createElement('div')
 	loadingSpinner = document.createElement('span')
@@ -86,18 +85,63 @@ class LoadingElement {
 		this.loadingBackdrop.remove()
 	}
 }
+class ErrorElement {
+	ErrorDialog =
+		/** @type {HTMLDialogElement} */
+		(document.querySelector('#Error_Dialog'))
+	ErrorMessage =
+		/** @type {HTMLElement} */
+		(this.ErrorDialog.querySelector('#Error_Message'))
+
+	/** Function To Create A Error Dialog With Error Message
+	 * @param {String} message
+	 */
+	showError = message => {
+		this.ErrorDialog.showModal()
+		this.ErrorMessage.textContent = `${message}`
+	}
+}
+class SearchElement {
+	SearchForm =
+		/** @type {HTMLFieldSetElement} */
+		(document.querySelector('#Search_Form'))
+
+	SearchInput =
+		/** @type {HTMLInputElement} */
+		(this.SearchForm.querySelector('#Location_Input'))
+
+	SearchButton =
+		/** @type {HTMLButtonElement} */
+		(this.SearchForm.querySelector('#Search_Button'))
+
+	CurrentLocation =
+		/** @type {HTMLButtonElement} */
+		(this.SearchForm.querySelector('#Current_Location'))
+
+	searchValidation() {
+		const value = this.SearchInput.value.trim()
+		const test = /^[a-zA-Z][a-zA-Z0-9, _-]{1,}$/
+		return test.test(value)
+	}
+}
 // #endregion
 
 // #region APIs that return Objects
 /** A function that fetches user's location data
  * @returns {Promise<UserLocation>} Returns the UserLocation  Object
- * @throws Error if response fails
  */
 const getLocation = async () => {
+	const errorDialog = new ErrorElement()
 	const fetchedLocation = await fetch('https://ipwho.is/')
-		.then(response => response.json())
+		.then(response => {
+			if (!response.ok) {
+				errorDialog.showError(`${response.status}`)
+			} else {
+				return response.json()
+			}
+		})
 		.catch(err => {
-			throw err.message
+			errorDialog.showError(`${err.message}`)
 		})
 	/**@type {UserLocation} */
 	const userLocation = {
@@ -112,16 +156,22 @@ const getLocation = async () => {
 /** A function That returns weather Data longitude and latitude
  * @param {number} latitude The latitude of the location, default is 0
  * @param {number} longitude The longitude of the location, default is 0
- * @returns {Promise<WeatherData>}
- * @throws Error when Can't get the weather.
+ * @returns {Promise<WeatherData>} Returns the WeatherData Object
  */
 const getForecast = async (latitude = 0, longitude = 0) => {
+	const errorDialog = new ErrorElement()
 	const fetchedForecast = await fetch(
 		`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=sunrise,sunset,temperature_2m_min,temperature_2m_max,weather_code&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m&timezone=auto`
 	)
-		.then(response => response.json())
+		.then(response => {
+			if (!response.ok) {
+				errorDialog.showError(`${response.status}`)
+			} else {
+				return response.json()
+			}
+		})
 		.catch(err => {
-			throw err.message
+			errorDialog.showError(`${err.message}`)
 		})
 	/** @type{WeatherData} */
 	const weatherData = {
@@ -137,6 +187,39 @@ const getForecast = async (latitude = 0, longitude = 0) => {
 		weeklyWeatherCode: fetchedForecast.daily.weather_code,
 	}
 	return weatherData
+}
+
+/** A function that takes a string and responds with a location corresponding to the string
+ * @param {String} locationInput
+ * @returns {Promise<UserLocation>} Returns the UserLocation Object
+ */
+const getLocationFromInput = async locationInput => {
+	const errorDialog = new ErrorElement()
+	const fetchedLocation = await fetch(
+		`https://geocoding-api.open-meteo.com/v1/search?name=${locationInput}&count=1&language=en&format=json`
+	)
+		.then(response => {
+			if (!response.ok) {
+				errorDialog.showError(`${response.status}`)
+			} else {
+				return response.json()
+			}
+		})
+		.catch(err => {
+			errorDialog.showError(`${err.message}`)
+		})
+
+	if (!fetchedLocation.results) {
+		errorDialog.showError(`Can't Find any location with that name.`)
+	}
+	/** @type {UserLocation}*/
+	const userLocation = {
+		cityName: fetchedLocation.results[0].name,
+		countryName: fetchedLocation.results[0].country,
+		longitude: fetchedLocation.results[0].longitude,
+		latitude: fetchedLocation.results[0].latitude,
+	}
+	return userLocation
 }
 // #endregion
 
@@ -210,14 +293,16 @@ const stringToDate = (dateString, option) => {
 }
 // #endregion
 
-// #region Initialising Funtion
-/**Updates the Whole Page with Information From the API*/
-const pageInit = async () => {
+// #region Page Update Function & Intial Function
+/**Updates the user interface with weather forecast information.
+ * @param {UserLocation | null} [searchLocation] Optional location to query, which defaults to the user's current location.
+ */
+const updatePage = async searchLocation => {
 	const Loader = new LoadingElement()
 	Loader.createLoader()
 	const weatherApp = new appUIElements()
 
-	const userLocation = await getLocation()
+	const userLocation = searchLocation ? searchLocation : await getLocation()
 	const weatherData = await getForecast(
 		userLocation.latitude,
 		userLocation.longitude
@@ -235,11 +320,12 @@ const pageInit = async () => {
 		weatherData.currentWeatherCode
 	)}`
 	weatherApp.temperatureMain.innerText = `${weatherData.currentTemperature}`
-	weatherApp.windspeed.innerText = `${weatherData.currentWindSpeed}Kmph ${decodeWindDirection(weatherData.currentWindDirection)}`
+	weatherApp.windspeed.innerText = `Wind ${weatherData.currentWindSpeed}Kmph ${decodeWindDirection(weatherData.currentWindDirection)}`
 
 	weatherApp.sunrise.innerText = `Sunrise at ${stringToDate(weatherData.currentSunrise, 'time')}`
 	weatherApp.sunset.innerText = `Sunset at ${stringToDate(weatherData.currentSunset, 'time')}`
 
+	weatherApp.TableForecast.innerText = ''
 	for (let i = 1; i < weatherData.weeklyDates.length - 1; i++) {
 		const weeklyWeatherCode = decodeWeather(weatherData.weeklyWeatherCode[i])
 
@@ -258,9 +344,26 @@ const pageInit = async () => {
 		)
 		weeklyForecastRow.append(day, weeklyMinTemperature, weeklyMaxTemperature)
 		weatherApp.TableForecast.append(weeklyForecastRow)
-		console.log(i, weatherData.weeklyMinTemperature[i])
 	}
 }
 
-pageInit()
+updatePage()
+const searchLocation = new SearchElement()
+
+searchLocation.SearchButton.addEventListener('click', async event => {
+	event.preventDefault()
+	if (searchLocation.searchValidation()) {
+		await getLocationFromInput(searchLocation.SearchInput.value).then(
+			location => {
+				if (location) {
+					updatePage(location)
+				}
+			}
+		)
+	}
+})
+searchLocation.CurrentLocation.addEventListener('click', event => {
+	event.preventDefault()
+	updatePage()
+})
 // #endregion

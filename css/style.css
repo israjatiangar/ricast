@@ -14,12 +14,15 @@ h1 {
 }
 #Error {
 	display: none;
+	position: fixed;
 	transform: translateY(100vh);
 	scale: 0.8;
 	transition: all 0.15s ease-out allow-discrete;
 }
 #Error[open] {
 	display: block;
+	top: 0;
+	left: 0;
 	scale: 1;
 	transform: translateY(0);
 	@starting-style {
@@ -37,10 +40,15 @@ h1 {
 	place-items: center;
 	width: 100svw;
 	height: 100vh;
+	opacity: 1;
 	position: fixed;
 	pointer-events: visible;
 	top: 0;
 	left: 0;
+	transition: all 0.2s ease;
+	@starting-style {
+		opacity: 0;
+	}
 }
 .loader {
 	--color-1: var(--ri-text-muted);
