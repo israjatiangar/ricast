@@ -12,26 +12,15 @@ h1 {
 .empty_forecast:only-child {
 	display: table-row;
 }
-#Error {
-	display: none;
-	position: fixed;
-	transform: translateY(100vh);
-	scale: 0.8;
-	transition: all 0.15s ease-out allow-discrete;
-}
-#Error[open] {
-	display: block;
-	top: 0;
-	left: 0;
-	scale: 1;
-	transform: translateY(0);
-	@starting-style {
-		scale: 0.8;
-		display: block;
-		transform: translateY(100vh);
+tbody > tr {
+	background-color: var(--ri-header-footer-color);
+	&:not(:last-child) {
+		border-bottom: var(--ri-border);
 	}
 }
-
+.textAlign-center {
+	text-align: center;
+}
 :has(> .loader) {
 	z-index: 10;
 	background: rgb(from #000 r g b / 0.5);
@@ -61,10 +50,30 @@ h1 {
 	display: inline-block;
 	box-sizing: border-box;
 	animation: rotation 1s linear infinite;
+
+	@keyframes rotation {
+		to {
+			transform: rotate(360deg);
+		}
+	}
 }
 
-@keyframes rotation {
-	to {
-		transform: rotate(360deg);
+#Error {
+	display: none;
+	position: fixed;
+	transform: translateY(100vh);
+	scale: 0.8;
+	transition: all 0.15s ease-out allow-discrete;
+}
+#Error[open] {
+	display: block;
+	top: 0;
+	left: 0;
+	scale: 1;
+	transform: translateY(0);
+	@starting-style {
+		scale: 0.8;
+		display: block;
+		transform: translateY(100vh);
 	}
 }

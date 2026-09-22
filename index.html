@@ -8,13 +8,14 @@
 		<link rel="stylesheet" href="./css/style.css" />
 		<script defer src="./js/script.js"></script>
 	</head>
-	<body class="ri-width-full">
+	<body class="ri-width-full ri-rounded-max">
 		<header>
 			<nav>
 				<strong>🌈 riCast</strong>
 			</nav>
 		</header>
 		<main>
+			<br />
 			<fieldset id="Search_Form">
 				<legend>Search a Location</legend>
 				<input
@@ -33,7 +34,7 @@
 			<div class="ri-grid">
 				<section>
 					<h2>Today</h2>
-					<article id="Today_Card" align="center">
+					<article id="Today_Card" class="textAlign-center">
 						<header>
 							<strong>----, ----</strong>
 							<br />
@@ -46,8 +47,12 @@
 						</div>
 						<footer>
 							<div class="ri-grid">
-								<span id="Sunrise">Sunrise at --:--</span>
-								<span id="Sunset">Sunset at --:--</span>
+								<span id="Sunrise" role="button" disabled
+									>Sunrise at --:--</span
+								>
+								<span id="Sunset" role="button" disabled
+									>Sunset at --:--</span
+								>
 							</div>
 						</footer>
 					</article>
@@ -78,8 +83,7 @@
 				<h3>Error</h3>
 			</header>
 			<div id="Error_Message">
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam,
-				autem.
+				Default Error Message that shouldn't be visible!
 			</div>
 			<footer>
 				<button command="close" commandfor="Error_Dialog">Close</button>
@@ -88,5 +92,12 @@
 		<footer align="center">
 			<small>powered by Open Meteo & ipwho.is</small>
 		</footer>
+		<script>
+			// let hue = 240
+			// setInterval(() => {
+			// 	hue = hue === 360 ? 0 : (hue += 2)
+			// 	document.querySelector('body').setAttribute('data-ri-hue', hue)
+			// }, 1000)
+		</script>
 	</body>
 </html>

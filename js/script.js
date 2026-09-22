@@ -1,5 +1,4 @@
 // @ts-check
-
 // #region Type Definitions
 /** @typedef {Object} UserLocation
  * @property {String} cityName
@@ -25,8 +24,9 @@
 /** @typedef {Object} LocationResult
  * @property {String} name
  * @property {String} country
- *
- * @typedef {Object} GeocodingResponse
+ */
+
+/** @typedef {Object} GeocodingResponse
  * @property {Array<LocationResult>} [results]
  *
  */
@@ -40,11 +40,11 @@ const CURRENT_DATE = new Date().toLocaleString('en', {
 	month: 'short',
 	year: 'numeric',
 })
-const DEBOUNCE_TIME = 500 //ms
+const DEBOUNCE_TIME = 600 //ms
 /** Delcared all App UI Element in a Class for easy access and better organisation
- * @class appUIElements
+ * @class AppUIElements
  */
-class appUIElements {
+class AppUIElements {
 	TodayCard =
 		/** @type {HTMLElement} */
 		(document.querySelector('#Today_Card'))
@@ -54,7 +54,7 @@ class appUIElements {
 
 	//Order of Appearance in DOM
 	//CurrentWeather Card
-	locationHeader =
+	location =
 		/** @type {HTMLElement} */
 		(this.TodayCard.querySelector('strong'))
 
@@ -80,36 +80,7 @@ class appUIElements {
 		/** @type {HTMLElement} */
 		(this.TodayCard.querySelector('#Sunset'))
 }
-class LoadingElement {
-	loadingBackdrop = document.createElement('div')
-	loadingSpinner = document.createElement('span')
-	createLoader = () => {
-		this.loadingBackdrop.classList.add('loaderBackdrop')
-		this.loadingSpinner.classList.add('loader')
-		this.loadingBackdrop.append(this.loadingSpinner)
-		document.querySelector('body')?.append(this.loadingBackdrop)
-	}
-	removeLoader = () => {
-		this.loadingSpinner.remove()
-		this.loadingBackdrop.remove()
-	}
-}
-class ErrorElement {
-	ErrorDialog =
-		/** @type {HTMLDialogElement} */
-		(document.querySelector('#Error_Dialog'))
-	ErrorMessage =
-		/** @type {HTMLElement} */
-		(this.ErrorDialog.querySelector('#Error_Message'))
-
-	/** Function To Create A Error Dialog With Error Message
-	 * @param {String} message
-	 */
-	showError = message => {
-		this.ErrorDialog.showModal()
-		this.ErrorMessage.textContent = `${message}`
-	}
-}
+/** Declared Addintional Search Element that can be created for better organisation */
 class SearchElement {
 	SearchForm =
 		/** @type {HTMLFieldSetElement} */
@@ -133,15 +104,47 @@ class SearchElement {
 
 	searchValidation() {
 		const value = this.SearchInput.value.trim()
-		const test = /^[a-zA-Z][a-zA-Z0-9, _-]{1,}$/
+		const test = /^[a-zA-Z][a-zA-Z0-9, _-]{3,}$/
 		return test.test(value)
+	}
+}
+/** Declared Addintional Lodaing Element that can be created for better organisation */
+class LoadingElement {
+	loadingBackdrop = document.createElement('div')
+	loadingSpinner = document.createElement('span')
+	createLoader = () => {
+		this.loadingBackdrop.classList.add('loaderBackdrop')
+		this.loadingSpinner.classList.add('loader')
+		this.loadingBackdrop.append(this.loadingSpinner)
+		document.querySelector('body')?.append(this.loadingBackdrop)
+	}
+	removeLoader = () => {
+		this.loadingSpinner.remove()
+		this.loadingBackdrop.remove()
+	}
+}
+/** Declared Addintional Error Element that can be created for better organisation */
+class ErrorElement {
+	ErrorDialog =
+		/** @type {HTMLDialogElement} */
+		(document.querySelector('#Error_Dialog'))
+	ErrorMessage =
+		/** @type {HTMLElement} */
+		(this.ErrorDialog.querySelector('#Error_Message'))
+
+	/** Function To Create A Error Dialog With Error Message
+	 * @param {String} message
+	 */
+	showError = message => {
+		this.ErrorDialog.showModal()
+		this.ErrorMessage.textContent = `${message}`
 	}
 }
 // #endregion
 
 // #region APIs that return Objects
 /** A function that fetches user's location data
- * @returns {Promise<UserLocation>} Returns the UserLocation  Object
+ * @returns {Promise<UserLocation>} Returns the {@link UserLocation}  Object
  */
 const getLocation = async () => {
 	const errorDialog = new ErrorElement()
@@ -169,7 +172,7 @@ const getLocation = async () => {
 /** A function That returns weather Data longitude and latitude
  * @param {number} latitude The latitude of the location, default is 0
  * @param {number} longitude The longitude of the location, default is 0
- * @returns {Promise<WeatherData>} Returns the WeatherData Object
+ * @returns {Promise<WeatherData>} Returns the {@link WeatherData} Object
  */
 const getForecast = async (latitude = 0, longitude = 0) => {
 	const errorDialog = new ErrorElement()
@@ -202,9 +205,9 @@ const getForecast = async (latitude = 0, longitude = 0) => {
 	return weatherData
 }
 
-/** A function that takes a string and responds with a location corresponding to the string
+/** A function that takes a string and returns a location corresponding to the string
  * @param {String} locationInput
- * @returns {Promise<UserLocation>} Returns the UserLocation Object
+ * @returns {Promise<UserLocation>} Returns the {@link UserLocation} Object
  */
 const getLocationFromInput = async locationInput => {
 	const errorDialog = new ErrorElement()
@@ -235,9 +238,9 @@ const getLocationFromInput = async locationInput => {
 	return userLocation
 }
 
-/** A Function Take Takes in Input and returns a string of matching Location Options
+/** A Function Take Takes in Input and returns a list of matching Location Options
  * @param {String} locationInput
- * @returns {Promise<Array<String>> }
+ * @returns {Promise<Array<String>> } An Array<String>  of place name matching user input
  */
 const getLocationInputOptions = async locationInput => {
 	/** @type {GeocodingResponse} */
@@ -307,10 +310,10 @@ const decodeWindDirection = direction => {
 		: '↑N'
 	return windDirection
 }
-/** A Function that takes in Date String And returns Date Or Time Based on the option Parameter
+/** A Function that takes in Date String And returns Date Or Time Based on the {@link option} Parameter
  * @param {String} dateString
  * @param {String} option Either time or dayName as String
- * @returns string Value of Time or DayName Based on {option}
+ * @returns string Value of Time or DayName Based on {@link option}
  */
 const stringToDate = (dateString, option) => {
 	switch (option) {
@@ -331,13 +334,13 @@ const stringToDate = (dateString, option) => {
 // #endregion
 
 // #region Page Update Function & Intial Function
-/**Updates the user interface with weather forecast information.
+/** Updates the user interface with weather forecast information.
  * @param {UserLocation | null} [searchLocation] Optional location to query, which defaults to the user's current location.
  */
 const updatePage = async searchLocation => {
 	const Loader = new LoadingElement()
 	Loader.createLoader()
-	const weatherApp = new appUIElements()
+	const weatherApp = new AppUIElements()
 
 	const userLocation = searchLocation ? searchLocation : await getLocation()
 	const weatherData = await getForecast(
@@ -350,20 +353,20 @@ const updatePage = async searchLocation => {
 		'data-ri-hue',
 		weatherToHue(weatherData.currentWeatherCode)
 	)
-	weatherApp.locationHeader.innerText = `${userLocation.cityName}, ${userLocation.countryName}`
+	weatherApp.location.innerText = `${userLocation.cityName}, ${userLocation.countryName}`
 	weatherApp.currentDateSubHead.innerText = `${CURRENT_DATE}`
 
 	weatherApp.weatherIcon.innerText = `${decodeWeather(
 		weatherData.currentWeatherCode
 	)}`
-	weatherApp.temperatureMain.innerText = `${weatherData.currentTemperature}`
+	weatherApp.temperatureMain.innerText = `${weatherData.currentTemperature} °C`
 	weatherApp.windspeed.innerText = `Wind ${weatherData.currentWindSpeed}Kmph ${decodeWindDirection(weatherData.currentWindDirection)}`
 
 	weatherApp.sunrise.innerText = `Sunrise at ${stringToDate(weatherData.currentSunrise, 'time')}`
 	weatherApp.sunset.innerText = `Sunset at ${stringToDate(weatherData.currentSunset, 'time')}`
 
 	weatherApp.TableForecast.innerText = ''
-	for (let i = 1; i < weatherData.weeklyDates.length - 1; i++) {
+	for (let i = 0; i < weatherData.weeklyDates.length; i++) {
 		const weeklyWeatherCode = decodeWeather(weatherData.weeklyWeatherCode[i])
 
 		const weeklyForecastRow = document.createElement('tr')
@@ -371,9 +374,9 @@ const updatePage = async searchLocation => {
 		const weeklyMinTemperature = document.createElement('td')
 		const weeklyMaxTemperature = document.createElement('td')
 
-		day.innerText = `${stringToDate(weatherData.weeklyDates[i], 'dayName')}`
-		weeklyMinTemperature.innerText = `${weeklyWeatherCode} ${weatherData.weeklyMinTemperature[i]}`
-		weeklyMaxTemperature.textContent = `${weeklyWeatherCode} ${weatherData.weeklyMaxTemperature[i]}`
+		day.innerText = `${i === 0 ? 'Today' : stringToDate(weatherData.weeklyDates[i], 'dayName')}`
+		weeklyMinTemperature.innerText = `${weeklyWeatherCode} ${weatherData.weeklyMinTemperature[i]} °C`
+		weeklyMaxTemperature.textContent = `${weeklyWeatherCode} ${weatherData.weeklyMaxTemperature[i]} °C`
 
 		weeklyForecastRow.setAttribute(
 			'data-ri-hue',
@@ -383,41 +386,50 @@ const updatePage = async searchLocation => {
 		weatherApp.TableForecast.append(weeklyForecastRow)
 	}
 }
+/** A function sets up and and runs the search for the webpage
+ * @returns {void}
+ */
+const initSearch = () => {
+	const searchLocation = new SearchElement()
+	let inputTimer = DEBOUNCE_TIME
+	searchLocation.SearchInput.addEventListener('input', () => {
+		if (!searchLocation.searchValidation()) return
+		searchLocation.SearchOptionsList.innerHTML = ''
+		clearTimeout(inputTimer)
+		inputTimer = setTimeout(async () => {
+			const results = await getLocationInputOptions(
+				searchLocation.SearchInput.value
+			)
+			results.map(option => {
+				const createOption = document.createElement('option')
+				createOption.setAttribute('value', option)
+				searchLocation.SearchOptionsList.append(createOption)
+			})
+		}, DEBOUNCE_TIME)
+	})
 
-updatePage()
-
-const searchLocation = new SearchElement()
-let inputTimer = DEBOUNCE_TIME
-searchLocation.SearchInput.addEventListener('input', () => {
-	searchLocation.SearchOptionsList.innerHTML = ''
-	clearTimeout(inputTimer)
-	inputTimer = setTimeout(async () => {
-		const results = await getLocationInputOptions(
-			searchLocation.SearchInput.value
-		)
-		results.map(option => {
-			const createOption = document.createElement('option')
-			createOption.setAttribute('value', option)
-			searchLocation.SearchOptionsList.append(createOption)
-		})
-	}, DEBOUNCE_TIME)
-})
-
-searchLocation.SearchButton.addEventListener('click', async event => {
-	event.preventDefault()
-	if (searchLocation.searchValidation()) {
-		await getLocationFromInput(searchLocation.SearchInput.value).then(
-			location => {
-				if (location) {
-					updatePage(location)
+	searchLocation.SearchButton.addEventListener('click', async event => {
+		event.preventDefault()
+		if (searchLocation.searchValidation()) {
+			await getLocationFromInput(searchLocation.SearchInput.value).then(
+				location => {
+					if (location) {
+						updatePage(location)
+					}
 				}
-			}
-		)
-	}
-})
+			)
+		}
+	})
 
-searchLocation.CurrentLocation.addEventListener('click', event => {
-	event.preventDefault()
+	searchLocation.CurrentLocation.addEventListener('click', event => {
+		event.preventDefault()
+		updatePage()
+	})
+}
+
+const startApp = () => {
 	updatePage()
-})
+	initSearch()
+}
 // #endregion
+startApp()
