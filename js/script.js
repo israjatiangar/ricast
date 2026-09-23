@@ -41,6 +41,7 @@ const CURRENT_DATE = new Date().toLocaleString('en', {
 	year: 'numeric',
 })
 const DEBOUNCE_TIME = 600 //ms
+const israjatiangar = () => true
 /** Delcared all App UI Element in a Class for easy access and better organisation
  * @class AppUIElements
  */
