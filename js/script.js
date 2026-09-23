@@ -341,50 +341,53 @@ const stringToDate = (dateString, option) => {
 const updatePage = async searchLocation => {
 	const Loader = new LoadingElement()
 	Loader.createLoader()
-	const weatherApp = new AppUIElements()
 
-	const userLocation = searchLocation ? searchLocation : await getLocation()
-	const weatherData = await getForecast(
-		userLocation.latitude,
-		userLocation.longitude
-	)
-	Loader.removeLoader()
-
-	weatherApp.TodayCard.setAttribute(
-		'data-ri-hue',
-		weatherToHue(weatherData.currentWeatherCode)
-	)
-	weatherApp.location.innerText = `${userLocation.cityName}, ${userLocation.countryName}`
-	weatherApp.currentDateSubHead.innerText = `${CURRENT_DATE}`
-
-	weatherApp.weatherIcon.innerText = `${decodeWeather(
-		weatherData.currentWeatherCode
-	)}`
-	weatherApp.temperatureMain.innerText = `${weatherData.currentTemperature} °C`
-	weatherApp.windspeed.innerText = `Wind ${weatherData.currentWindSpeed}Kmph ${decodeWindDirection(weatherData.currentWindDirection)}`
-
-	weatherApp.sunrise.innerText = `Sunrise at ${stringToDate(weatherData.currentSunrise, 'time')}`
-	weatherApp.sunset.innerText = `Sunset at ${stringToDate(weatherData.currentSunset, 'time')}`
-
-	weatherApp.TableForecast.innerText = ''
-	for (let i = 0; i < weatherData.weeklyDates.length; i++) {
-		const weeklyWeatherCode = decodeWeather(weatherData.weeklyWeatherCode[i])
-
-		const weeklyForecastRow = document.createElement('tr')
-		const day = document.createElement('td')
-		const weeklyMinTemperature = document.createElement('td')
-		const weeklyMaxTemperature = document.createElement('td')
-
-		day.innerText = `${i === 0 ? 'Today' : stringToDate(weatherData.weeklyDates[i], 'dayName')}`
-		weeklyMinTemperature.innerText = `${weeklyWeatherCode} ${weatherData.weeklyMinTemperature[i]} °C`
-		weeklyMaxTemperature.textContent = `${weeklyWeatherCode} ${weatherData.weeklyMaxTemperature[i]} °C`
-
-		weeklyForecastRow.setAttribute(
-			'data-ri-hue',
-			weatherToHue(weatherData.weeklyWeatherCode[i])
+	try {
+		const weatherApp = new AppUIElements()
+		const userLocation = searchLocation ? searchLocation : await getLocation()
+		const weatherData = await getForecast(
+			userLocation.latitude,
+			userLocation.longitude
 		)
-		weeklyForecastRow.append(day, weeklyMinTemperature, weeklyMaxTemperature)
-		weatherApp.TableForecast.append(weeklyForecastRow)
+
+		weatherApp.TodayCard.setAttribute(
+			'data-ri-hue',
+			weatherToHue(weatherData.currentWeatherCode)
+		)
+		weatherApp.location.innerText = `${userLocation.cityName}, ${userLocation.countryName}`
+		weatherApp.currentDateSubHead.innerText = `${CURRENT_DATE}`
+
+		weatherApp.weatherIcon.innerText = `${decodeWeather(
+			weatherData.currentWeatherCode
+		)}`
+		weatherApp.temperatureMain.innerText = `${weatherData.currentTemperature} °C`
+		weatherApp.windspeed.innerText = `Wind ${weatherData.currentWindSpeed}Kmph ${decodeWindDirection(weatherData.currentWindDirection)}`
+
+		weatherApp.sunrise.innerText = `Sunrise at ${stringToDate(weatherData.currentSunrise, 'time')}`
+		weatherApp.sunset.innerText = `Sunset at ${stringToDate(weatherData.currentSunset, 'time')}`
+
+		weatherApp.TableForecast.innerText = ''
+		for (let i = 0; i < weatherData.weeklyDates.length; i++) {
+			const weeklyWeatherCode = decodeWeather(weatherData.weeklyWeatherCode[i])
+
+			const weeklyForecastRow = document.createElement('tr')
+			const day = document.createElement('td')
+			const weeklyMinTemperature = document.createElement('td')
+			const weeklyMaxTemperature = document.createElement('td')
+
+			day.innerText = `${i === 0 ? 'Today' : stringToDate(weatherData.weeklyDates[i], 'dayName')}`
+			weeklyMinTemperature.innerText = `${weeklyWeatherCode} ${weatherData.weeklyMinTemperature[i]} °C`
+			weeklyMaxTemperature.textContent = `${weeklyWeatherCode} ${weatherData.weeklyMaxTemperature[i]} °C`
+
+			weeklyForecastRow.setAttribute(
+				'data-ri-hue',
+				weatherToHue(weatherData.weeklyWeatherCode[i])
+			)
+			weeklyForecastRow.append(day, weeklyMinTemperature, weeklyMaxTemperature)
+			weatherApp.TableForecast.append(weeklyForecastRow)
+		}
+	} finally {
+		Loader.removeLoader()
 	}
 }
 /** A function sets up and and runs the search for the webpage
