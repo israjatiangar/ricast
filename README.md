@@ -1,4 +1,4 @@
-# 🌈riCast ForeCast
+# 🌈 riCast ForeCast
 
 This is a simple WeatherForecast App, in which you can search for any location
 and view the weather forecast of that location, and by defaut the app shows the
