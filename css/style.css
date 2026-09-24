@@ -27,8 +27,8 @@ tbody > tr {
 	backdrop-filter: blur(6px);
 	display: grid;
 	place-items: center;
-	width: 100svw;
-	height: 100vh;
+	inline-size: 100svw;
+	block-size: 100svh;
 	opacity: 1;
 	position: fixed;
 	pointer-events: visible;
@@ -40,22 +40,15 @@ tbody > tr {
 	}
 }
 .loader {
-	--color-1: var(--ri-text-muted);
 	--size: 1px;
 	width: calc(48 * var(--size));
 	height: calc(48 * var(--size));
-	border: calc(5 * var(--size)) solid var(--color-1);
+	border: calc(5 * var(--size)) solid var(--ri-text);
 	border-bottom-color: transparent;
 	border-radius: 50%;
 	display: inline-block;
 	box-sizing: border-box;
 	animation: rotation 1s linear infinite;
-
-	@keyframes rotation {
-		to {
-			transform: rotate(360deg);
-		}
-	}
 }
 
 #Error {
@@ -75,5 +68,11 @@ tbody > tr {
 		scale: 0.8;
 		display: block;
 		transform: translateY(100vh);
+	}
+}
+
+@keyframes rotation {
+	to {
+		transform: rotate(360deg);
 	}
 }

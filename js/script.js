@@ -430,10 +430,9 @@ const initSearch = () => {
 		updatePage()
 	})
 }
-
-const startApp = () => {
+// #endregion
+/** An IIFE to Start App */
+;(() => {
 	updatePage()
 	initSearch()
-}
-// #endregion
-startApp()
+})()
