@@ -144,8 +144,8 @@ class ErrorElement {
 // #endregion
 
 // #region APIs that return Objects
-/** A function that fetches user's location data
- * @returns {Promise<UserLocation>} Returns the {@link UserLocation}  Object
+/** Automatically get {@link UserLocation} (using IPWhois API) so that users don't have to type
+ * @returns {Promise<UserLocation>}
  */
 const getLocation = async () => {
 	const errorDialog = new ErrorElement()
@@ -170,10 +170,10 @@ const getLocation = async () => {
 	return userLocation
 }
 
-/** A function That returns weather Data longitude and latitude
+/** Get {@link WeatherData} from OpenMeteo using latitude and longitude
  * @param {number} latitude The latitude of the location, default is 0
  * @param {number} longitude The longitude of the location, default is 0
- * @returns {Promise<WeatherData>} Returns the {@link WeatherData} Object
+ * @returns {Promise<WeatherData>}
  */
 const getForecast = async (latitude = 0, longitude = 0) => {
 	const errorDialog = new ErrorElement()
@@ -206,9 +206,9 @@ const getForecast = async (latitude = 0, longitude = 0) => {
 	return weatherData
 }
 
-/** A function that takes a string and returns a location corresponding to the string
+/** Get {@link UserLocation} from OpenMeteo (via locationInput ie. on search input)
  * @param {String} locationInput
- * @returns {Promise<UserLocation>} Returns the {@link UserLocation} Object
+ * @returns {Promise<UserLocation>}
  */
 const getLocationFromInput = async locationInput => {
 	const errorDialog = new ErrorElement()
@@ -239,7 +239,7 @@ const getLocationFromInput = async locationInput => {
 	return userLocation
 }
 
-/** A Function Take Takes in Input and returns a list of matching Location Options
+/** Suggest upto 10 locations using OpenMeteo Geocode API (via locationInput ie. on search input)
  * @param {String} locationInput
  * @returns {Promise<Array<String>> } An Array<String>  of place name matching user input
  */
@@ -265,9 +265,10 @@ const getLocationInputOptions = async locationInput => {
 // #endregion
 
 // #region Supplementary Functions
-/** A Function that takes in ridiculous weather code and returns emoji
- * @param {Number} weatherCode  A WW weathercode
- * @returns {String} Emoji Corresponding to the code
+/** Gives emoji from
+ * {@link https://open-meteo.com/en/docs#weather_variable_documentation|WW weathercode}
+ * @param {Number} weatherCode A WW weather Code
+ * @returns {String}
  */
 const decodeWeather = weatherCode => {
 	const weatherEmoji = ['☀️', '⛅', '☁️', '🌧️', '❄️', '⛈️']
@@ -281,9 +282,10 @@ const decodeWeather = weatherCode => {
 		: 5
 	return weatherEmoji[emojiChoice]
 }
-/** A function that takes in a WeatherCode and Returns a Hue String
- * @param {Number} weatherCode A WW weathercode
- * @returns {String} hue A 360 deg hue that matches the vibe of the weather
+/** Gives custom hues for styling from
+ * {@link https://open-meteo.com/en/docs#weather_variable_documentation|WW weathercode}
+ * @param {Number} weatherCode A WW weather Code
+ * @returns {String}
  */
 const weatherToHue = weatherCode => {
 	let hue =
@@ -295,9 +297,9 @@ const weatherToHue = weatherCode => {
 		: '290'
 	return hue
 }
-/** A function that takes in number and returns Direction
+/** Gives arrow + direction (eg. ↓S)
  * @param {Number} direction A Degree/Number from 0-360
- * @returns {String} Caridinal Direction of Wind + Arrow
+ * @returns {String}
  */
 const decodeWindDirection = direction => {
 	const windDirection =
@@ -311,13 +313,14 @@ const decodeWindDirection = direction => {
 		: '↑N'
 	return windDirection
 }
-/** A Function that takes in Date String And returns Date Or Time Based on the {@link option} Parameter
+/** Give you a dayName short (ie. Mon) or 24h time short (ie. 17:35), Adjusted to correct Locale.
  * @param {String} dateString
- * @param {String} option Either time or dayName as String
- * @returns string Value of Time or DayName Based on {@link option}
+ * @param {String} option Either 'time' or 'dayName' as String
+ * @returns {String} defaults to returning time
  */
 const stringToDate = (dateString, option) => {
 	switch (option) {
+		default:
 		case 'time':
 			const time = new Date(dateString).toLocaleTimeString('en-US', {
 				localeMatcher: 'best fit',
@@ -327,6 +330,7 @@ const stringToDate = (dateString, option) => {
 			return time
 		case 'dayName':
 			const dayName = new Date(dateString).toLocaleDateString('en-US', {
+				localeMatcher: 'best fit',
 				weekday: 'long',
 			})
 			return dayName
@@ -336,7 +340,7 @@ const stringToDate = (dateString, option) => {
 
 // #region Page Update Function & Intial Function
 /** Updates the user interface with weather forecast information.
- * @param {UserLocation | null} [searchLocation] Optional location to query, which defaults to the user's current location.
+ * @param {UserLocation | null} [searchLocation] Optional location to query, gets user location via IPWhois if blank
  */
 const updatePage = async searchLocation => {
 	const Loader = new LoadingElement()
@@ -390,7 +394,8 @@ const updatePage = async searchLocation => {
 		Loader.removeLoader()
 	}
 }
-/** A function sets up and and runs the search for the webpage
+/** Sets up search, and suggests location as the user types.\
+ * Updates ui using userinput on search or on get current location click
  * @returns {void}
  */
 const initSearch = () => {
