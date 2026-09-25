@@ -1,3 +1,6 @@
+.ri-form-group > * {
+	flex: 1;
+}
 .weather {
 	font-size: 500%;
 	padding: 0;
