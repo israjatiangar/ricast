@@ -23,6 +23,8 @@ I also used my own css framework for this project.\
   <img alt="riCast on mobile" src="./public/screenshots/mobile-light.png" height="250">
 </picture>
 
+Find all screenshots at : [./public/screenshots](./public/screenshots)
+
 ## 📖 Things I Learned
 
 I learned about working with external apis, and how to use them in your project.
