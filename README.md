@@ -11,6 +11,18 @@ typescript.
 I also used my own css framework for this project.\
 [check that out here](https://github.com/israjatiangar/ricss)
 
+## 📷 Screenshots
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./public/screenshots/desktop-dark.png">
+  <img alt="riCast on desktop" src="./public/screenshots/desktop-light.png" height="250">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./public/screenshots/mobile-dark.png">
+  <img alt="riCast on mobile" src="./public/screenshots/mobile-light.png" height="250">
+</picture>
+
 ## 📖 Things I Learned
 
 I learned about working with external apis, and how to use them in your project.

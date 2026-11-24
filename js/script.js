@@ -81,7 +81,7 @@ class AppUIElements {
 		/** @type {HTMLElement} */
 		(this.TodayCard.querySelector('#Sunset'))
 }
-/** Declared Addintional Search Element that can be created for better organisation */
+/** Declared Additional Search Element that can be created for better organisation */
 class SearchElement {
 	SearchForm =
 		/** @type {HTMLFieldSetElement} */
@@ -109,7 +109,7 @@ class SearchElement {
 		return test.test(value)
 	}
 }
-/** Declared Addintional Lodaing Element that can be created for better organisation */
+/** Declared Additional Lodaing Element that can be created for better organisation */
 class LoadingElement {
 	loadingBackdrop = document.createElement('div')
 	loadingSpinner = document.createElement('span')
@@ -348,7 +348,8 @@ const updatePage = async searchLocation => {
 
 	try {
 		const weatherApp = new AppUIElements()
-		const userLocation = searchLocation ? searchLocation : await getLocation()
+		const userLocation =
+			searchLocation ? searchLocation : await getLocation()
 		const weatherData = await getForecast(
 			userLocation.latitude,
 			userLocation.longitude
@@ -372,7 +373,9 @@ const updatePage = async searchLocation => {
 
 		weatherApp.TableForecast.innerText = ''
 		for (let i = 0; i < weatherData.weeklyDates.length; i++) {
-			const weeklyWeatherCode = decodeWeather(weatherData.weeklyWeatherCode[i])
+			const weeklyWeatherCode = decodeWeather(
+				weatherData.weeklyWeatherCode[i]
+			)
 
 			const weeklyForecastRow = document.createElement('tr')
 			const day = document.createElement('td')
@@ -387,7 +390,11 @@ const updatePage = async searchLocation => {
 				'data-ri-hue',
 				weatherToHue(weatherData.weeklyWeatherCode[i])
 			)
-			weeklyForecastRow.append(day, weeklyMinTemperature, weeklyMaxTemperature)
+			weeklyForecastRow.append(
+				day,
+				weeklyMinTemperature,
+				weeklyMaxTemperature
+			)
 			weatherApp.TableForecast.append(weeklyForecastRow)
 		}
 	} finally {
